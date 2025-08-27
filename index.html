@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ficha de Serviço Áudio</title>
+    <title>Ficha de Serviço Video</title>
     <style>
         body {
             margin: 0;
@@ -16,17 +16,15 @@
             align-items: center;
         }
 
-      
-
         .error-container {
-            background: rgb(206, 202, 202);
+           background: rgb(206, 202, 202);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             border-radius: 15px;
             padding: 30px;
             color: #1615158e;
         }
 
-      
+       
 
         h1 {
             margin-bottom: 20px;
@@ -34,7 +32,7 @@
         }
 
         p {
-            font-size: 1.1em;
+             font-size: 1.1em;
             line-height: 1.6;
             margin-bottom: 20px;
             text-shadow: 1px 1px 2px #5f7171;
@@ -83,8 +81,8 @@
             font-size: 1.3em;
         }
 
+       
         
-     
     </style>
 </head>
 <body>
@@ -95,8 +93,8 @@
     </div>
 
     <script>
-        // URL do AppSheet Áudio (codificada para segurança adicional)
-        const encodedUrl = btoa('https://www.appsheet.com/start/c03c8f90-95b2-4f21-9119-8774ee5a7a9c');
+        // URL do AppSheet Video (codificada para segurança adicional)
+        const encodedUrl = btoa('https://www.appsheet.com/start/41daaaf2-460f-4a7d-bc8d-dbd5e53193c5');
 
         // Função para detectar dispositivos móveis
         function isMobileDevice() {
@@ -205,7 +203,7 @@
             container.className = 'container error-container';
             container.innerHTML = `
                 <h1 class="mobile-warning">Acesso Negado</h1>
-                <h2 class="mobile-warning">Ficha de Serviço Áudio</h2>
+                <h2 class="mobile-warning">Ficha de Serviço Video</h2>
                 <p>Este aplicativo só pode ser acessado através de um computador desktop.</p>
                 <p>Por favor, acesse através de:</p>
                 <ul style="text-align: left; display: inline-block;">
