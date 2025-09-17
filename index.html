@@ -1,274 +1,113 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ficha de Serviço Video</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #5f7171 0%, #5f8181 100%);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ficha de Serviço Vídeo</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #5f7171, #5f8181);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: white;
+    }
 
-        .error-container {
-           background: rgb(206, 202, 202);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            border-radius: 15px;
-            padding: 30px;
-            color: #1615158e;
-        }
+    .loading {
+      text-align: center;
+      font-size: 1.2em;
+    }
 
-       
+    .error {
+      background: #fff;
+      color: #c00;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      max-width: 500px;
+    }
 
-        h1 {
-            margin-bottom: 20px;
-            font-size: 2.2em;
-        }
-
-        p {
-             font-size: 1.1em;
-            line-height: 1.6;
-            margin-bottom: 20px;
-            text-shadow: 1px 1px 2px #5f7171;
-        }
-
-        .loading {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 20px 0;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .hidden-frame {
-            position: absolute;
-            top: -9999px;
-            left: -9999px;
-            width: 1px;
-            height: 1px;
-            border: none;
-        }
-
-        .app-frame {
-            width: 100vw;
-            height: 100vh;
-            border: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 9999;
-            background: white;
-        }
-
-        .mobile-warning {
-            text-align: center;
-            color: #ce1212;
-            font-weight: bold;
-            font-size: 1.3em;
-        }
-
-       
-        
-    </style>
+    iframe {
+      width: 100vw;
+      height: 100vh;
+      border: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 9999;
+      background: white;
+    }
+  </style>
 </head>
 <body>
-    <div id="content">
-        <div class="container" id="mainContainer">
-            <div class="loading"></div>
-        </div>
-    </div>
+  <div id="app">
+    <div class="loading">🔐 Verificando dispositivo...</div>
+  </div>
 
-    <script>
-        // URL do AppSheet Video (codificada para segurança adicional)
-        const encodedUrl = btoa('https://www.appsheet.com/start/c6b6dd4d-02c0-4d21-9c19-70a737b2fe33');
+  <script>
+    (function(){
 
-        // Função para detectar dispositivos móveis
-        function isMobileDevice() {
-            const userAgent = navigator.userAgent.toLowerCase();
-            const mobileKeywords = [
-                'mobile', 'android', 'iphone', 'ipad', 'ipod', 
-                'blackberry', 'windows phone', 'opera mini',
-                'iemobile', 'wpdesktop'
-            ];
-            
-            // Verifica user agent
-            const isMobileUA = mobileKeywords.some(keyword => userAgent.includes(keyword));
-            
-            // Verifica tamanho da tela
-            const isSmallScreen = window.innerWidth <= 768 || window.innerHeight <= 600;
-            
-            // Verifica se é touch device
-            const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-            
-            return isMobileUA || (isSmallScreen && isTouchDevice);
-        }
+      // 🚫 Detecta celular/tablet
+      function isMobileDevice() {
+        const ua = navigator.userAgent.toLowerCase();
+        const mobile = [
+          "android","iphone","ipad","ipod","blackberry",
+          "windows phone","opera mini","iemobile","mobile"
+        ];
+        return mobile.some(k => ua.includes(k)) || window.innerWidth <= 768;
+      }
 
-        // Função para verificar se é um desktop válido
-        function isValidDesktop() {
-            return !isMobileDevice() && 
-                   window.innerWidth >= 1024 && 
-                   window.innerHeight >= 768;
-        }
-
-        // Função para limpar histórico e ocultar URL
-        function secureAccess() {
-            // Limpa o histórico
-            if (history.replaceState) {
-                history.replaceState(null, null, window.location.pathname);
-            }
-            
-            // Remove referrer
-            if (document.referrer) {
-                try {
-                    history.replaceState({}, '', location.pathname);
-                } catch(e) {}
-            }
-            
-            // Desabilita botão voltar
-            window.addEventListener('popstate', function(e) {
-                history.pushState(null, null, location.pathname);
-            });
-            
-            // Desabilita F12, Ctrl+U, Ctrl+Shift+I
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'F12' || 
-                    (e.ctrlKey && e.key === 'u') ||
-                    (e.ctrlKey && e.shiftKey && e.key === 'I') ||
-                    (e.ctrlKey && e.shiftKey && e.key === 'J') ||
-                    (e.ctrlKey && e.key === 's')) {
-                    e.preventDefault();
-                    return false;
-                }
-            });
-            
-            // Desabilita menu de contexto
-            document.addEventListener('contextmenu', function(e) {
-                e.preventDefault();
-                return false;
-            });
-            
-            // Desabilita seleção de texto
-            document.addEventListener('selectstart', function(e) {
-                e.preventDefault();
-                return false;
-            });
-        }
-
-        // Função para carregar o AppSheet de forma segura
-        function loadAppSheet() {
-            const container = document.getElementById('mainContainer');
-                        
-            setTimeout(() => {
-                // Cria iframe para carregar o AppSheet
-                const iframe = document.createElement('iframe');
-                iframe.className = 'app-frame';
-                iframe.src = atob(encodedUrl);
-                iframe.sandbox = 'allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox';
-                
-                // Remove o conteúdo atual e adiciona o iframe
-                document.body.innerHTML = '';
-                document.body.appendChild(iframe);
-                
-                // Aplica medidas de segurança adicionais
-                secureAccess();
-                
-                // Monitora tentativas de acesso à URL
-                iframe.onload = function() {
-                    try {
-                        // Tenta ocultar a URL do iframe (limitado por CORS)
-                        console.clear();
-                    } catch(e) {}
-                };
-                
-            }, 2000);
-        }
-
-        // Função para mostrar erro de dispositivo móvel
-        function showMobileError() {
-            const container = document.getElementById('mainContainer');
-            container.className = 'container error-container';
-            container.innerHTML = `
-                <h1 class="mobile-warning">Acesso Negado</h1>
-                <h2 class="mobile-warning">Ficha de Serviço Video</h2>
-                <p>Este aplicativo só pode ser acessado através de um computador desktop.</p>
-                <p>Por favor, acesse através de:</p>
-                <ul style="text-align: left; display: inline-block;">
-                    <li>Computador Desktop</li>
-                    <li>Laptop</li>
-                </ul>
-                <p><strong>Dispositivos móveis não são suportados por questões de segurança.</strong></p>
-            `;
-        }
-
-        // Função principal de verificação
-        function checkAccess() {
-            // Aplica medidas de segurança básicas imediatamente
-            secureAccess();
-            
-            setTimeout(() => {
-                if (isValidDesktop()) {
-                    loadAppSheet();
-                } else {
-                    showMobileError();
-                }
-            }, 3000); // Delay para simular verificação de segurança
-        }
-
-        // Inicia a verificação quando a página carrega
-        window.addEventListener('load', checkAccess);
+      // 🔒 URL ofuscada em pedaços
+      const parts = [
+       /* "aHR0cHM6Ly93d3cuYXBwc2hlZXQuY29t", 
+        "L3N0YXJ0",                        
+        "LzM0MjM4NjQ4LWQzODEtNDhkOC05OTc3", 
+        "LTg4ZmJhNGZjNTJhMA=="*/  
+        "aHR0cHM6Ly93d3cuYXBwc2hlZXQuY29tL3N0YXJ0L2M2YjZkZDRkLTAyYzAtNGQyMS05YzE5LTcwYTczN2IyZmUzMw=="
         
-        // Monitora redimensionamento da janela
-        window.addEventListener('resize', function() {
-            if (isMobileDevice() && document.querySelector('.app-frame')) {
-                location.reload();
-            }
-        });
+      ];
 
-        // Previne zoom em dispositivos móveis
-        document.addEventListener('touchstart', function(e) {
-            if (e.touches.length > 1) {
-                e.preventDefault();
-            }
-        });
+      function decode(str) {
+        return atob(str);
+      }
 
-        // Limpa console periodicamente
-        setInterval(() => {
-            console.clear();
-        }, 5000);
+      function getRealUrl() {
+        //return decode(parts[0]) + decode(parts[1]) + decode(parts[2]) + decode(parts[3]);
+         return decode(parts);
+      }
 
-        // Adiciona proteção específica para aplicações de vídeo
-        document.addEventListener('DOMContentLoaded', function() {
-            // Desabilita picture-in-picture se disponível
-            if ('pictureInPictureEnabled' in document) {
-                document.addEventListener('enterpictureinpicture', function(e) {
-                    e.preventDefault();
-                });
-            }
-            
-            // Monitora fullscreen para vídeos
-            document.addEventListener('fullscreenchange', function() {
-                if (!document.fullscreenElement) {
-                    // Saiu do fullscreen - aplica segurança novamente
-                    secureAccess();
-                }
-            });
-        });
+      function loadApp() {
+        const url = getRealUrl();
+        document.body.innerHTML = "";
+        const iframe = document.createElement("iframe");
+        iframe.src = url;
+        document.body.appendChild(iframe);
+      }
 
-    </script>
+      function showError() {
+        document.getElementById("app").innerHTML = `
+          <div class="error">
+            <h1>🚫 Acesso negado</h1>
+            <p>Este sistema só pode ser acessado de um <strong>computador desktop</strong>.</p>
+          </div>
+        `;
+      }
+
+      // 🔎 Verifica e carrega
+      setTimeout(() => {
+        if (isMobileDevice()) {
+          showError();
+        } else {
+          loadApp();
+        }
+      }, 2000);
+
+    })();
+  </script>
 </body>
 </html>
-
